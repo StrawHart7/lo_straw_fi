@@ -7,6 +7,7 @@ const ASSETS = [
   '/app.js',
   '/sw.js',
   '/lofi_girl.png',
+  '/lofi_girl_mobile.png',
   '/manifest.json'
 ];
 
