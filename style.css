@@ -28,12 +28,10 @@ body {
   display: block;
 }
 
-/* Par défaut on cache le mobile */
 #visual-mobile {
   display: none;
 }
 
-/* Sur mobile on switche */
 @media (max-width: 768px) {
   #visual-desktop {
     display: none;
@@ -56,14 +54,14 @@ body {
 
 #status {
   color: rgba(255, 255, 255, 0.85);
-  font-size: 14px;
+  font-size: 13px;
   background: rgba(15, 10, 10, 0.75);
   border: 1px solid rgba(72, 201, 176, 0.3);
-  padding: 6px 14px;
+  padding: 5px 14px;
   border-radius: 20px;
 }
 
-button {
+#btn-load {
   background: rgba(15, 10, 10, 0.75);
   color: white;
   border: 1px solid rgba(72, 201, 176, 0.5);
@@ -73,10 +71,53 @@ button {
   cursor: pointer;
   backdrop-filter: blur(8px);
   transition: background 0.2s, border-color 0.2s;
-  white-space: nowrap;
 }
 
-button:hover {
+#btn-load:hover {
+  background: rgba(30, 20, 20, 0.88);
+  border-color: rgba(72, 201, 176, 0.8);
+}
+
+#player {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#btn-play {
+  background: rgba(15, 10, 10, 0.75);
+  color: white;
+  border: 1px solid rgba(72, 201, 176, 0.5);
+  padding: 10px 32px;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: background 0.2s, border-color 0.2s;
+}
+
+#btn-play:hover {
+  background: rgba(30, 20, 20, 0.88);
+  border-color: rgba(72, 201, 176, 0.8);
+}
+
+#btn-change {
+  background: rgba(15, 10, 10, 0.65);
+  color: white;
+  border: 1px solid rgba(72, 201, 176, 0.3);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: background 0.2s, border-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#btn-change:hover {
   background: rgba(30, 20, 20, 0.88);
   border-color: rgba(72, 201, 176, 0.8);
 }

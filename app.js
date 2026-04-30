@@ -12,11 +12,9 @@ audio.loop = true;
 function openDB() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
-
     request.onupgradeneeded = (e) => {
       e.target.result.createObjectStore(STORE_NAME);
     };
-
     request.onsuccess = (e) => resolve(e.target.result);
     request.onerror = (e) => reject(e.target.error);
   });
@@ -45,6 +43,8 @@ function loadAudio() {
 const statusEl = document.getElementById('status');
 const btnLoad = document.getElementById('btn-load');
 const btnPlay = document.getElementById('btn-play');
+const btnChange = document.getElementById('btn-change');
+const playerEl = document.getElementById('player');
 
 function setStatus(text) {
   statusEl.textContent = text;
@@ -55,59 +55,67 @@ function setupAudioSource(blob) {
   audio.src = url;
 }
 
-// --- Logique principale ---
+function pickAudioFile(onFilePicked) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'audio/*';
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (file) onFilePicked(file);
+  };
+  input.click();
+}
+
+// --- Init ---
 
 async function init() {
   db = await openDB();
   const stored = await loadAudio();
 
   if (stored) {
-    // Audio déjà sauvegardé
     setupAudioSource(stored);
     setStatus('🎵 Prêt');
-    btnPlay.classList.remove('hidden');
+    playerEl.classList.remove('hidden');
   } else {
-    // Première visite, demander le fichier
     setStatus('📁 Aucun audio trouvé');
     btnLoad.classList.remove('hidden');
   }
 }
 
-// Charger depuis le PC et sauvegarder
+// --- Events ---
+
 btnLoad.addEventListener('click', () => {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'audio/*';
-
-  input.onchange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
+  pickAudioFile(async (file) => {
     setStatus('💾 Sauvegarde en cours...');
     btnLoad.classList.add('hidden');
-
     await saveAudio(file);
-
     setupAudioSource(file);
-    setStatus('✅ Audio sauvegardé !');
-    btnPlay.classList.remove('hidden');
-  };
-
-  input.click();
+    setStatus('🎵 Prêt');
+    playerEl.classList.remove('hidden');
+  });
 });
 
-// Play / Pause
 btnPlay.addEventListener('click', () => {
   if (audio.paused) {
     audio.play();
-    btnPlay.textContent = '⏸ Pause';
+    btnPlay.textContent = '⏸';
     setStatus('🎵 En cours...');
   } else {
     audio.pause();
-    btnPlay.textContent = '▶ Play';
+    btnPlay.textContent = '▶';
     setStatus('⏸ En pause');
   }
 });
 
-// Démarrer
+btnChange.addEventListener('click', () => {
+  pickAudioFile(async (file) => {
+    audio.pause();
+    btnPlay.textContent = '▶';
+    setStatus('💾 Sauvegarde en cours...');
+    await saveAudio(file);
+    setupAudioSource(file);
+    setStatus('✅ Nouvel audio chargé !');
+  });
+});
+
 init();
