@@ -7,6 +7,38 @@ let db;
 let audio = new Audio();
 audio.loop = true;
 
+function setupMediaSession() {
+  if (!('mediaSession' in navigator)) return;
+
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title: 'Lofi',
+    artist: 'Lofi Girl',
+    album: 'Study Mix',
+  });
+
+  navigator.mediaSession.setActionHandler('play', () => {
+    audio.play();
+    btnPlay.textContent = '⏸';
+    setStatus('🎵 En cours...');
+    navigator.mediaSession.playbackState = 'playing';
+  });
+
+  navigator.mediaSession.setActionHandler('pause', () => {
+    audio.pause();
+    btnPlay.textContent = '▶';
+    setStatus('⏸ En pause');
+    navigator.mediaSession.playbackState = 'paused';
+  });
+
+  navigator.mediaSession.setActionHandler('stop', () => {
+    audio.pause();
+    audio.currentTime = 0;
+    btnPlay.textContent = '▶';
+    setStatus('⏸ En pause');
+    navigator.mediaSession.playbackState = 'paused';
+  });
+}
+
 // --- IndexedDB ---
 
 function openDB() {
@@ -74,6 +106,7 @@ async function init() {
 
   if (stored) {
     setupAudioSource(stored);
+    setupMediaSession();
     setStatus('🎵 Prêt');
     playerEl.classList.remove('hidden');
   } else {
@@ -90,6 +123,7 @@ btnLoad.addEventListener('click', () => {
     btnLoad.classList.add('hidden');
     await saveAudio(file);
     setupAudioSource(file);
+    setupMediaSession();
     setStatus('🎵 Prêt');
     playerEl.classList.remove('hidden');
   });
