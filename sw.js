@@ -11,15 +11,17 @@ const ASSETS = [
   '/manifest.json'
 ];
 
-// Installation — on met tout en cache
+// Installation — cache tous les assets
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS);
+    })
   );
   self.skipWaiting();
 });
 
-// Activation — on supprime les vieux caches
+// Activation — supprime les vieux caches
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) =>
@@ -31,11 +33,12 @@ self.addEventListener('activate', (e) => {
   self.clients.claim();
 });
 
-// Fetch — on sert depuis le cache si dispo
+// Fetch — cache d'abord, réseau ensuite, jamais d'erreur
 self.addEventListener('fetch', (e) => {
   e.respondWith(
     caches.match(e.request).then((cached) => {
-      return cached || fetch(e.request);
+      if (cached) return cached;
+      return fetch(e.request).catch(() => caches.match('/index.html'));
     })
   );
 });
