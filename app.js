@@ -2,6 +2,9 @@ const DB_NAME = 'lofi-db';
 const DB_VERSION = 1;
 const STORE_NAME = 'audio';
 const AUDIO_KEY = 'lofi-track';
+const volumeControl = document.getElementById('volume-control');
+const volumeSlider = document.getElementById('volume-slider');
+const volumeIcon = document.getElementById('volume-icon');
 
 let db;
 let audio = new Audio();
@@ -109,6 +112,7 @@ async function init() {
     setupMediaSession();
     setStatus('🎵 Prêt');
     playerEl.classList.remove('hidden');
+    volumeControl.classList.remove('hidden');
   } else {
     setStatus('📁 Aucun audio trouvé');
     btnLoad.classList.remove('hidden');
@@ -126,6 +130,7 @@ btnLoad.addEventListener('click', () => {
     setupMediaSession();
     setStatus('🎵 Prêt');
     playerEl.classList.remove('hidden');
+    volumeControl.classList.remove('hidden');
   });
 });
 
@@ -150,6 +155,19 @@ btnChange.addEventListener('click', () => {
     setupAudioSource(file);
     setStatus('✅ Nouvel audio chargé !');
   });
+});
+
+volumeSlider.addEventListener('input', () => {
+  const val = parseFloat(volumeSlider.value);
+  audio.volume = val;
+
+  if (val === 0) {
+    volumeIcon.textContent = '🔇';
+  } else if (val < 0.5) {
+    volumeIcon.textContent = '🔉';
+  } else {
+    volumeIcon.textContent = '🔊';
+  }
 });
 
 init();
